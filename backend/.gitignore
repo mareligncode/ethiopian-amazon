@@ -1,0 +1,29 @@
+# Binaries
+/bin/
+/dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.out
+
+# Test binary
+*.test
+
+# Coverage
+*.cover
+coverage.out
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# OS
+.DS_Store

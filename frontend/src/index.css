@@ -1,0 +1,583 @@
+/* Amazon Clone Custom Styles - Using Tailwind CSS CDN */
+
+:root {
+  --amazon-orange: #FF9900;
+  --amazon-blue: #007185;
+  --amazon-dark: #0f1111;
+  --amazon-yellow: #FFD814;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.amazon-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.amazon-input:focus {
+  outline: none;
+  border-color: #FF9900;
+  box-shadow: 0 0 0 3px rgba(255, 153, 0, 0.2), inset 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.amazon-button {
+  background-color: #FFD814;
+  border: 1px solid #FCD200;
+  color: #0f1111;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  box-shadow: 0 2px 5px 0 rgba(213, 217, 217, .5);
+  cursor: pointer;
+}
+
+.amazon-button:hover {
+  background-color: #F7CA00;
+  border-color: #F2C200;
+}
+
+.amazon-button:active {
+  background-color: #F0B800;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Amazon-specific utilities */
+.amazon-card-shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.amazon-card-shadow-hover:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.text-amazon-orange {
+  color: var(--amazon-orange);
+}
+
+.bg-amazon-orange {
+  background-color: var(--amazon-orange);
+}
+
+.text-amazon-blue {
+  color: var(--amazon-blue);
+}
+
+.bg-amazon-blue {
+  background-color: var(--amazon-blue);
+}
+
+.text-amazon-dark {
+  color: var(--amazon-dark);
+}
+
+.bg-amazon-dark {
+  background-color: var(--amazon-dark);
+}
+
+.text-amazon-yellow {
+  color: var(--amazon-yellow);
+}
+
+.bg-amazon-yellow {
+  background-color: var(--amazon-yellow);
+}
+
+/* Custom animations */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: .5;
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.3s ease-out;
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Custom form styles */
+input,
+select,
+textarea {
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  background-color: white;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px rgb(251 146 60 / 0.5);
+  border-color: #f97316;
+}
+
+/* Button styles */
+button {
+  cursor: pointer;
+}
+
+/* Focus ring utilities */
+.focus\:ring-2:focus {
+  box-shadow: 0 0 0 2px rgb(251 146 60 / 0.5);
+}
+
+/* Custom grid utilities */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* Custom spacing utilities */
+.space-x-4>*+* {
+  margin-left: 1rem;
+}
+
+.space-y-4>*+* {
+  margin-top: 1rem;
+}
+
+.space-x-6>*+* {
+  margin-left: 1.5rem;
+}
+
+.space-y-6>*+* {
+  margin-top: 1.5rem;
+}
+
+/* Custom sizing utilities */
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.w-1\/2 {
+  width: 50%;
+}
+
+.w-1\/3 {
+  width: 33.333333%;
+}
+
+.w-2\/3 {
+  width: 66.666667%;
+}
+
+.w-1\/4 {
+  width: 25%;
+}
+
+.w-3\/4 {
+  width: 75%;
+}
+
+/* Custom text utilities */
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+/* Custom display utilities */
+.block {
+  display: block;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.flex {
+  display: flex;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.grid {
+  display: grid;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Custom positioning utilities */
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.fixed {
+  position: fixed;
+}
+
+/* Custom flex utilities */
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+/* Custom border utilities */
+.border {
+  border-width: 1px;
+}
+
+.border-t {
+  border-top-width: 1px;
+}
+
+.border-b {
+  border-bottom-width: 1px;
+}
+
+.border-gray-200 {
+  border-color: #e5e7eb;
+}
+
+.border-gray-300 {
+  border-color: #d1d5db;
+}
+
+/* Custom background utilities */
+.bg-white {
+  background-color: white;
+}
+
+.bg-gray-50 {
+  background-color: #f9fafb;
+}
+
+.bg-gray-100 {
+  background-color: #f3f4f6;
+}
+
+.bg-gray-200 {
+  background-color: #e5e7eb;
+}
+
+/* Custom text color utilities */
+.text-white {
+  color: white;
+}
+
+.text-gray-500 {
+  color: #6b7280;
+}
+
+.text-gray-600 {
+  color: #4b5563;
+}
+
+.text-gray-700 {
+  color: #374151;
+}
+
+.text-gray-900 {
+  color: #111827;
+}
+
+/* Custom font weight utilities */
+.font-medium {
+  font-weight: 500;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+/* Custom margin utilities */
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+/* Custom padding utilities */
+.p-2 {
+  padding: 0.5rem;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.p-6 {
+  padding: 1.5rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+/* Custom rounded utilities */
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.rounded-md {
+  border-radius: 0.375rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+/* Custom transition utilities */
+.transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Custom hover states */
+.hover\:bg-gray-50:hover {
+  background-color: #f9fafb;
+}
+
+.hover\:text-gray-700:hover {
+  color: #374151;
+}
+
+.hover\:underline:hover {
+  text-decoration: underline;
+}
+
+/* Custom Amazon orange focus ring */
+.focus\:ring-amazon-orange:focus {
+  box-shadow: 0 0 0 2px rgb(255 153 0 / 0.5);
+}
+
+/* Custom Amazon button styles */
+.bg-brightness-110:hover {
+  filter: brightness(1.1);
+}
+
+/* Custom responsive utilities */
+@media (min-width: 640px) {
+  .sm\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sm\:text-3xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .lg\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .xl\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Custom max-width utilities */
+.max-w-4xl {
+  max-width: 56rem;
+}
+
+.max-w-6xl {
+  max-width: 96rem;
+}
+
+.max-w-7xl {
+  max-width: 80rem;
+}
+
+/* Custom margin auto */
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Custom object utilities */
+.object-contain {
+  object-fit: contain;
+}
+
+.object-cover {
+  object-fit: cover;
+}
+
+/* Custom cursor utilities */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
