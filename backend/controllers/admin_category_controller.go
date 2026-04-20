@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// AdminCreateCategory spawns a new global category taxonomy
 func AdminCreateCategory(c *gin.Context) {
 	var input struct {
 		Name        string `json:"name" binding:"required"`
@@ -33,7 +32,6 @@ func AdminCreateCategory(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Category created successfully", "category": category})
 }
 
-// AdminUpdateCategory modifies the active taxonomy mapping
 func AdminUpdateCategory(c *gin.Context) {
 	id := c.Param("id")
 
@@ -64,7 +62,6 @@ func AdminUpdateCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Category updated successfully", "category": category})
 }
 
-// AdminDeleteCategory triggers a soft delete on an existing category breaking active product groupings
 func AdminDeleteCategory(c *gin.Context) {
 	id := c.Param("id")
 

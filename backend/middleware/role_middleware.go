@@ -23,8 +23,6 @@ func RequireRole(allowedRoles ...string) gin.HandlerFunc {
 			return
 		}
 
-		// LOGGING FOR DEBUGGING 403s
-		// fmt.Printf("ROLE_DEBUG: Checking access. User Role: %s | Allowed: %v\n", userRoleStr, allowedRoles)
 
 		for _, allowedRole := range allowedRoles {
 			if userRoleStr == allowedRole {

@@ -37,7 +37,6 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		c.Set("user_id", claims["user_id"])
 
-		// DYNAMIC ROLE VALIDATION: Fetch current role from DB to handle updates without re-login
 		userIDStr := fmt.Sprintf("%v", claims["user_id"])
 		user, err := models.GetUserByID(userIDStr)
 		if err != nil {

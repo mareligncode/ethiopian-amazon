@@ -9,7 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// UpdateDeliveryProfile handles UPSERT operations for Delivery personnel metadata and location tracking
 func UpdateDeliveryProfile(c *gin.Context) {
 	userIDVal, _ := c.Get("user_id")
 	userID := uint(userIDVal.(float64))
@@ -53,7 +52,6 @@ func UpdateDeliveryProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Profile updated successfully", "profile": profile})
 }
 
-// GetAvailableOrders retrieves the open marketplace of items ready to be shipped
 func GetAvailableOrders(c *gin.Context) {
 	items, err := models.GetAvailableDeliveries()
 	if err != nil {
@@ -61,7 +59,6 @@ func GetAvailableOrders(c *gin.Context) {
 		return
 	}
 
-	// Map backend items to 'routes' format expected by frontend
 	routes := make([]map[string]interface{}, 0)
 	for _, item := range items {
 		routes = append(routes, map[string]interface{}{
@@ -82,7 +79,6 @@ func GetAvailableOrders(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"routes": routes})
 }
 
-// AcceptDelivery links the specific OrderItem directly to the Delivery driver
 func AcceptDelivery(c *gin.Context) {
 	orderItemIDStr := c.Param("itemId")
 	orderItemID, err := strconv.ParseUint(orderItemIDStr, 10, 32)
@@ -103,7 +99,6 @@ func AcceptDelivery(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Delivery successfully assigned!", "assignment": assignment})
 }
 
-// GetActiveAssignment returns the current active delivery for the driver
 func GetActiveAssignment(c *gin.Context) {
 	userIDVal, _ := c.Get("user_id")
 	deliveryUserID := uint(userIDVal.(float64))
@@ -115,7 +110,6 @@ func GetActiveAssignment(c *gin.Context) {
 	}
 
 	var assignment models.DeliveryAssignment
-	// Pull one that isn't completed or failed
 	err := config.DB.Where("delivery_id = ? AND status NOT IN ('delivered', 'failed')", profile.ID).
 		Preload("OrderItem.Product").
 		Preload("OrderItem.Order.User").
@@ -126,7 +120,6 @@ func GetActiveAssignment(c *gin.Context) {
 		return
 	}
 
-	// Map to frontend structure
 	resp := map[string]interface{}{
 		"id":                   assignment.ID,
 		"route_id":             assignment.ID,
@@ -160,7 +153,6 @@ func StartAssignment(c *gin.Context) {
 	deliveryUserID := uint(userIDVal.(float64))
 
 	var assignment models.DeliveryAssignment
-	// Automatically pick the currently assigned one for simplification
 	err := config.DB.Joins("JOIN delivery_profiles on delivery_profiles.id = delivery_assignments.delivery_id").
 		Where("delivery_profiles.user_id = ? AND delivery_assignments.status = ?", deliveryUserID, "assigned").
 		First(&assignment).Error
@@ -187,7 +179,6 @@ func CompleteAssignment(c *gin.Context) {
 	notes := c.PostForm("delivery_notes")
 	proof := c.PostForm("delivery_location") // Used for ProofOption
 
-	// Handle Image file if present (for simulation we just save the name)
 	imageName := ""
 	file, err := c.FormFile("proof_images[0]")
 	if err == nil {
@@ -225,7 +216,6 @@ func GetDriverStats(c *gin.Context) {
 	})
 }
 
-// GetMyDeliveries gets the driver's active ledger of shipments
 func GetMyDeliveries(c *gin.Context) {
 	userIDVal, _ := c.Get("user_id")
 	deliveryUserID := uint(userIDVal.(float64))

@@ -33,14 +33,6 @@ func AddToCart(userID uint, productID uint, quantity int) (*CartItem, error) {
 		config.DB.Preload("Product.Images").First(&existingItem, existingItem.ID)
 		return &existingItem, nil
 	}
-
-	// 3. Item does not exist in cart yet
-	// Relaxing stock check for development/testing
-	// if quantity > product.Stock {
-	// 	return nil, errors.New("requested quantity exceeds available stock")
-	// }
-
-	// Calculate current price for Price Snapshot
 	currentPrice := product.Price
 	if product.DiscountPrice != nil {
 		currentPrice = *product.DiscountPrice
@@ -64,7 +56,6 @@ func AddToCart(userID uint, productID uint, quantity int) (*CartItem, error) {
 	return &newItem, nil
 }
 
-// GetUserCart retrieves all items in a user's cart, preloading full product layouts
 func GetUserCart(userID uint) ([]CartItem, error) {
 	var cart []CartItem
 	err := config.DB.Where("user_id = ?", userID).
@@ -76,21 +67,17 @@ func GetUserCart(userID uint) ([]CartItem, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	// Dynamic Cleanup: Identify items where the product no longer exists (orphaned items)
 	var validCart []CartItem
 	var orphanedIDs []uint
 
 	for _, item := range cart {
 		if item.Product.ID == 0 {
-			// Product didn't lode/doesn't exist
 			orphanedIDs = append(orphanedIDs, item.ID)
 		} else {
 			validCart = append(validCart, item)
 		}
 	}
 
-	// Kill orphans in background/implicitly to maintain database integrity
 	if len(orphanedIDs) > 0 {
 		fmt.Printf("DEBUG: GetUserCart - Purging %d orphaned items for User %d\n", len(orphanedIDs), userID)
 		config.DB.Delete(&CartItem{}, orphanedIDs)
@@ -99,7 +86,6 @@ func GetUserCart(userID uint) ([]CartItem, error) {
 	return validCart, nil
 }
 
-// UpdateCartItemQuantity modifies a specific line item, verifying ownership and stock thresholds
 func UpdateCartItemQuantity(cartItemID string, userID uint, newQuantity int) (*CartItem, error) {
 	var item CartItem
 	if err := config.DB.Where("id = ? AND user_id = ?", cartItemID, userID).Preload("Product").First(&item).Error; err != nil {
@@ -145,13 +131,11 @@ func VerifyAndGetCartItem(cartItemID string, userID uint) (*CartItem, error) {
 	return &item, nil
 }
 
-// ToggleSaveForLater switches item between active cart and saved list
 func ToggleSaveForLater(cartItemID string, userID uint, isSaved bool) error {
 	return config.DB.Model(&CartItem{}).Where("id = ? AND user_id = ?", cartItemID, userID).
 		Updates(map[string]interface{}{"is_saved_for_later": isSaved, "is_selected_for_checkout": !isSaved}).Error
 }
 
-// ToggleSelection sets whether the item is meant to be bought in the current checkout
 func ToggleSelection(cartItemID string, userID uint, isSelected bool) error {
 	return config.DB.Model(&CartItem{}).Where("id = ? AND user_id = ?", cartItemID, userID).
 		Update("is_selected_for_checkout", isSelected).Error

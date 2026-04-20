@@ -9,7 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetSystemStats returns a high-level overview of the Amazon Clone platform
 func GetSystemStats(c *gin.Context) {
 	var totalUsers int64
 	var totalSellers int64
@@ -53,7 +52,6 @@ func GetSystemStats(c *gin.Context) {
 	})
 }
 
-// GetGlobalOrders allows Admins to oversee all platform transactions
 func GetGlobalOrders(c *gin.Context) {
 	var orders []models.Order
 	statusFilter := c.Query("status")

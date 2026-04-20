@@ -9,7 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Redeems a gift card code and adds balance to user
 func RedeemGiftCard(c *gin.Context) {
 	var input struct {
 		Code string `json:"code" binding:"required"`
@@ -30,8 +29,6 @@ func RedeemGiftCard(c *gin.Context) {
 	}
 
 	tx := config.DB.Begin()
-
-	// Mark gift card as redeemed
 	now := time.Now()
 	giftCard.IsRedeemed = true
 	giftCard.RedeemedBy = &userID
@@ -42,7 +39,6 @@ func RedeemGiftCard(c *gin.Context) {
 		return
 	}
 
-	// Add balance to user
 	var user models.User
 	if err := tx.First(&user, userID).Error; err != nil {
 		tx.Rollback()
@@ -66,7 +62,6 @@ func RedeemGiftCard(c *gin.Context) {
 	})
 }
 
-// Get user wallet balance
 func GetUserBalance(c *gin.Context) {
 	userIDVal, _ := c.Get("user_id")
 	userID := uint(userIDVal.(float64))

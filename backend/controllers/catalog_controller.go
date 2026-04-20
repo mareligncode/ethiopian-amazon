@@ -9,28 +9,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetCatalog returns products with support for search and filters
 func GetCatalog(c *gin.Context) {
 	var products []models.Product
 	query := config.DB.Preload("Images").Preload("Category")
 
-	// 1. Keyword Search
 	if q := c.Query("q"); q != "" {
 		query = query.Where("name LIKE ? OR description LIKE ?", "%"+q+"%", "%"+q+"%")
 	}
 
-	// 2. Category Filter
 	if cat := c.Query("category"); cat != "" {
-		// Try parsing as integer ID first
 		if _, err := strconv.Atoi(cat); err == nil {
 			query = query.Where("category_id = ?", cat)
 		} else {
-			// Otherwise match by category name
 			query = query.Where("category_id IN (SELECT id FROM categories WHERE name = ?)", cat)
 		}
 	}
 
-	// 3. Price Filter
 	if min := c.Query("minPrice"); min != "" {
 		query = query.Where("price >= ?", min)
 	}
@@ -38,7 +32,6 @@ func GetCatalog(c *gin.Context) {
 		query = query.Where("price <= ?", max)
 	}
 
-	// 4. Sorting
 	sort := c.DefaultQuery("sort", "created_at desc")
 	query = query.Order(sort)
 
@@ -52,7 +45,6 @@ func GetCatalog(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"products": products, "count": len(products)})
 }
 
-// GetProductDetails returns a single product with full preloads for the PDP
 func GetProductDetails(c *gin.Context) {
 	id := c.Param("id")
 	var product models.Product
@@ -67,7 +59,6 @@ func GetProductDetails(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"product": product})
 }
 
-// GetRelatedProducts returns 10 products from the same category as the given product
 func GetRelatedProducts(c *gin.Context) {
 	id := c.Param("id")
 	var product models.Product
