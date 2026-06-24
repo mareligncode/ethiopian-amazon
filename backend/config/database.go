@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 	"github.com/joho/godotenv"
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -23,13 +23,13 @@ func ConnectDatabase() {
 	dbPort := os.Getenv("DB_PORT")
 	dbName := os.Getenv("DB_NAME")
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", dbUser, dbPassword, dbHost, dbPort, dbName)
-	database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Africa/Addis_Ababa", dbHost, dbUser, dbPassword, dbName, dbPort)
+	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
 
 	DB = database
-	log.Println("Connected to the MySQL database successfully!")
+	log.Println("Connected to the PostgreSQL database successfully!")
 }
