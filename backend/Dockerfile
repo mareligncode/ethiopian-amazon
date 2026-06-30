@@ -1,28 +1,22 @@
-# Build stage
-FROM golang:1.24-alpine AS builder
-
+FROM golang:1.24-bookworm AS builder
 WORKDIR /app
 
-# Copy everything first
-COPY . .
+# RUN apk add --no-cache git
 
-# Download dependencies
+COPY go.mod go.sum ./
 RUN go mod download
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -o main .
+COPY . .
 
-# Final stage
+# Change your build line to include these env variables:
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 FROM alpine:latest
 
 WORKDIR /root/
 
-# Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/main .
 COPY --from=builder /app/.env .
 
-# Expose port 8082
 EXPOSE 8082
 
-# Command to run the executable
 CMD ["./main"]

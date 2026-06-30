@@ -5,6 +5,7 @@ import (
 	"amazon-clone/config"
 	"amazon-clone/models"
 	"amazon-clone/routes"
+	_ "time/tzdata" // Bundles timezone data directly into the binary
 )
 
 func main() {
@@ -13,12 +14,12 @@ func main() {
 	err := config.DB.AutoMigrate(
 		&models.Item{},
 		&models.User{},
-		&models.SellerProfile{},
 		&models.Category{},
+		&models.SellerProfile{},
+		&models.Product{},
 		&models.ProductImage{},
 		&models.Review{},
 		&models.ReviewResponse{},
-		&models.Product{},
 		&models.CartItem{},
 		&models.Registry{},
 		&models.RegistryItem{},

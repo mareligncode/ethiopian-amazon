@@ -9,7 +9,7 @@ import (
 type Notification struct {
 	ID        uint            `gorm:"primaryKey" json:"id"`
 	UserID    uint            `gorm:"not null;index" json:"user_id"`
-	Type      string          `gorm:"type:enum('order','payment','delivery','promotion','system','seller');not null" json:"type"`
+	Type      string          `gorm:"type:varchar(20);not null;check:type IN ('order','payment','delivery','promotion','system','seller')" json:"type"`
 	Title     string          `gorm:"size:255;not null" json:"title"`
 	Message   string          `gorm:"type:text;not null" json:"message"`
 	Data      json.RawMessage `gorm:"type:json" json:"data"` // Order ID, Item ID, etc.

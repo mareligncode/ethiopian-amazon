@@ -11,7 +11,7 @@ type Commission struct {
 	CommissionRate   float64    `gorm:"type:decimal(5,2)" json:"commission_rate"` // e.g., 10.00 for 10%
 	CommissionAmount float64    `gorm:"type:decimal(10,2)" json:"commission_amount"`
 	SellerEarnings   float64    `gorm:"type:decimal(10,2)" json:"seller_earnings"`
-	Status           string     `gorm:"type:enum('pending','paid','refunded');default:'pending'" json:"status"`
+	Status           string     `gorm:"type:varchar(20);default:'pending';check:status IN ('pending','paid','refunded')" json:"status"`
 	PaidAt           *time.Time `json:"paid_at,omitempty"`
 	CreatedAt        time.Time  `json:"created_at"`
 

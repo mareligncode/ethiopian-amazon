@@ -1,4 +1,6 @@
 # Ethiopian Amazon (Multi-Vendor E-Commerce Platform)
+cd d:\go-gin
+docker compose up --build
 
 ##  What Problem It Solves
 It bridges the gap between local vendors and buyers by providing a centralized online marketplace. It simplifies product discovery, order management, secure payments, and delivery logistics in a unified platform tailored for the local market.

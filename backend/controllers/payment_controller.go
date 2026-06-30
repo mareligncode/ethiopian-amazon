@@ -248,8 +248,8 @@ func VerifyChapaPayment(c *gin.Context) {
 	// If this was a browser return (ReturnURL), redirect directly to the Digital Ticket
 	// Otherwise (CallbackURL), return JSON
 	if c.Request.URL.Path == "/api/payments/chapa/return" {
-		targetURL := fmt.Sprintf("http://localhost:5173/orders/%d/ticket?payment=success", order.ID)
-		fmt.Printf("DEBUG: Redirecting to ticket: %s\n", targetURL)
+		targetURL := "http://localhost:3000/orders?payment=success"
+		fmt.Printf("DEBUG: Redirecting to order history: %s\n", targetURL)
 		c.Redirect(http.StatusFound, targetURL)
 		return
 	}
