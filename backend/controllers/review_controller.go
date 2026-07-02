@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"amazon-clone/config"
 	"amazon-clone/models"
 	"fmt"
 	"net/http"
@@ -100,4 +101,27 @@ func GetCatalogReviews(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"total_reviews": len(reviews), "reviews": reviews})
+}
+
+// GetMySellerReviews retrieves all reviews left on products that belong to the merchant
+func GetMySellerReviews(c *gin.Context) {
+	sellerIDVal, _ := c.Get("user_id")
+	sellerID := uint(sellerIDVal.(float64))
+
+	var reviews []models.Review
+	err := config.DB.
+		Joins("JOIN products ON products.id = reviews.product_id").
+		Where("products.seller_id = ?", sellerID).
+		Preload("Product").
+		Preload("User").
+		Preload("Response").
+		Order("reviews.created_at desc").
+		Find(&reviews).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch seller reviews: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"reviews": reviews})
 }

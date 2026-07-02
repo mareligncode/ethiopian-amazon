@@ -6,6 +6,7 @@
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Amazon Clone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Configure Tailwind theme colors to match Amazon exactly -->
@@ -24,10 +25,15 @@
             slideInRight: {
               '0%': { transform: 'translateX(100%)' },
               '100%': { transform: 'translateX(0)' }
+            },
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' }
             }
           },
           animation: {
-            'slide-in-right': 'slideInRight 0.3s ease-out forwards'
+            'slide-in-right': 'slideInRight 0.3s ease-out forwards',
+            'fadeIn': 'fadeIn 0.5s ease-out forwards'
           }
         }
       }

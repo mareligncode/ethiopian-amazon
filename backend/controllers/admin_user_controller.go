@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 
 	"amazon-clone/models"
 	"amazon-clone/utils"
@@ -134,11 +135,22 @@ func AdminVerifySeller(c *gin.Context) {
 
 	profile, err := models.GetSellerProfileByID(sellerID)
 	if err != nil {
+		// Fallback: search by user ID
+		if uID, parseErr := strconv.ParseUint(sellerID, 10, 32); parseErr == nil {
+			profile, err = models.GetSellerProfileByUserID(uint(uID))
+		}
+	}
+	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Seller profile not found"})
 		return
 	}
 
 	profile.IsVerified = *input.IsVerified
+	if *input.IsVerified {
+		profile.Status = "approved"
+	} else {
+		profile.Status = "rejected"
+	}
 
 	if err := models.UpdateSellerProfile(&profile); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update seller verification status"})

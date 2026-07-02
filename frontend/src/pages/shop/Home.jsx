@@ -167,43 +167,7 @@ const Home = () => {
                             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amazon-orange"></div>
                         </div>
                     ) : products.length > 0 ? (
-                        <>
-                            <ProductStrip title="Inspired by your wishlist" products={products.slice(0, 10)} link="/catalog" />
-                            <ProductStrip title="Trending products you might like" products={[...products].reverse().slice(0, 10)} link="/catalog" />
-
-                            {/* Grid Section midway */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                                <div className="bg-white p-5 shadow-sm h-[380px]">
-                                    <h2 className="text-[21px] font-bold mb-3 text-[#0F1111]">Shop Deals in Electronics</h2>
-                                    <Link to="/catalog">
-                                        <img src="https://picsum.photos/seed/elec/300/300" className="w-full h-64 object-cover mb-2" alt="Elec" />
-                                        <span className="text-amazon-blue text-xs font-medium hover:underline">Explore now</span>
-                                    </Link>
-                                </div>
-                                <div className="bg-white p-5 shadow-sm h-[380px]">
-                                    <h2 className="text-[21px] font-bold mb-3 text-[#0F1111]">Refresh your Home</h2>
-                                    <Link to="/catalog">
-                                        <img src="https://picsum.photos/seed/home-ref/300/300" className="w-full h-64 object-cover mb-2" alt="Home" />
-                                        <span className="text-amazon-blue text-xs font-medium hover:underline">See categories</span>
-                                    </Link>
-                                </div>
-                                <div className="bg-white p-5 shadow-sm h-[380px]">
-                                    <h2 className="text-[21px] font-bold mb-3 text-[#0F1111]">Health & Beauty</h2>
-                                    <Link to="/catalog">
-                                        <img src="https://picsum.photos/seed/hb/300/300" className="w-full h-64 object-cover mb-2" alt="Health" />
-                                        <span className="text-amazon-blue text-xs font-medium hover:underline">Shop now</span>
-                                    </Link>
-                                </div>
-                                <div className="bg-white p-5 shadow-sm h-[380px]">
-                                    <h2 className="text-[21px] font-bold mb-3 text-[#0F1111]">Daily Essentials</h2>
-                                    <Link to="/catalog">
-                                        <img src="https://picsum.photos/seed/ess/300/300" className="w-full h-64 object-cover mb-2" alt="Ess" />
-                                        <span className="text-amazon-blue text-xs font-medium hover:underline">Discover more</span>
-                                    </Link>
-                                </div>
-                            </div>
-
-                            <ProductStrip title="Frequently repurchased items" products={products.slice(0, 10)} />
+                            <ProductStrip title="Products from our Sellers" products={products} link="/catalog" />
                         </>
                     ) : (
                         <div className="bg-white p-10 text-center shadow-sm">

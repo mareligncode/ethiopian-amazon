@@ -17,7 +17,7 @@ const OrderHistory = () => {
 
     const fetchOrders = async () => {
         try {
-            const response = await api.get('/orders');
+            const response = await api.get('/orders/');
             console.log('DEBUG: Full Orders Array:', response.data.orders);
             console.log('DEBUG: Order Statuses:', response.data.orders?.map(o => o.status));
             setOrders(response.data.orders || []);
@@ -46,7 +46,7 @@ const OrderHistory = () => {
 
     const getStatusIcon = (status) => {
         switch (status) {
-            case 'pending': return <FiClock className="w-5 h-5" />;
+            case 'pending': return <FiClock className="w-5 h-5 animate-pulse" />;
             case 'processing': return <FiPackage className="w-5 h-5" />;
             case 'shipped': return <FiTruck className="w-5 h-5" />;
             case 'delivered': return <FiCheckCircle className="w-5 h-5" />;
@@ -76,7 +76,7 @@ const OrderHistory = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gradient-to-br from-[#ffedc2] via-[#f8c471] to-[#ff9900]">
             {/* Header */}
             <div className="bg-white border-b">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -93,9 +93,9 @@ const OrderHistory = () => {
                             <button
                                 key={status}
                                 onClick={() => setFilter(status)}
-                                className={`whitespace-nowrap pb-2 px-1 border-b-2 font-medium text-sm capitalize transition-colors ${filter === status
-                                    ? 'border-amazon-orange text-[#C7511F]'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                                className={`whitespace-nowrap px-3 py-2 rounded-full text-sm font-medium capitalize transition-colors ${filter === status
+                                    ? 'bg-amazon-orange text-white'
+                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                     }`}
                             >
                                 {status === 'all' ? 'All Orders' : status}
@@ -126,7 +126,7 @@ const OrderHistory = () => {
                 ) : (
                     <div className="space-y-6">
                         {filteredOrders.map((order) => (
-                            <div key={order.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                            <div key={order.id} className="bg-white bg-opacity-80 backdrop-blur-lg border border-white/30 rounded-xl shadow-lg overflow-hidden transition-transform duration-300 hover:-translate-y-1 animate-fadeIn">
                                 {/* Order Header */}
                                 <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
                                     <div className="flex items-center justify-between">
@@ -196,7 +196,10 @@ const OrderHistory = () => {
                                                 </div>
                                                 <div className="flex flex-col items-end space-y-2">
                                                     {order.status === 'delivered' && (
-                                                        <button className="bg-white border border-gray-300 rounded shadow-sm text-sm font-medium hover:bg-gray-50 py-1 px-3">
+                                                        <button 
+                                                            onClick={() => navigate(`/orders/${order.id}/review/${item.Product.id}`)}
+                                                            className="bg-white border border-gray-300 rounded shadow-sm text-sm font-medium hover:bg-gray-50 py-1 px-3"
+                                                        >
                                                             Write review
                                                         </button>
                                                     )}

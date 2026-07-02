@@ -74,6 +74,11 @@ func InitChapaPayment(c *gin.Context) {
 		lastName = "User" // Prevents empty last names since Amazon-clone user just has "Name" string
 	}
 
+	backendURL := os.Getenv("BACKEND_URL")
+	if backendURL == "" {
+		backendURL = "http://localhost:8082" // Docker/local default
+	}
+
 	// Payload construction natively without using an external package
 	// Chapa Constraints: title <= 16 chars, description only Alphanumeric + hyphens/underscores/dots/spaces
 	payload := ChapaInitializePayload{
@@ -83,8 +88,8 @@ func InitChapaPayment(c *gin.Context) {
 		FirstName:   firstName,
 		LastName:    lastName,
 		TxRef:       txRef,
-		CallbackURL: "http://localhost:8082/api/payments/chapa/callback",               // Webhook destination
-		ReturnURL:   "http://localhost:8082/api/payments/chapa/return?tx_ref=" + txRef, // Browser redirect
+		CallbackURL: backendURL + "/api/payments/chapa/callback",               // Webhook destination
+		ReturnURL:   backendURL + "/api/payments/chapa/return?tx_ref=" + txRef, // Browser redirect
 		Customization: map[string]string{
 			"title":       "Amazon Clone",                            // 12 chars (Max 16)
 			"description": fmt.Sprintf("Order %d Payment", order.ID), // Removed '#' (Illegal char)
@@ -245,10 +250,14 @@ func VerifyChapaPayment(c *gin.Context) {
 		}
 	}
 
-	// If this was a browser return (ReturnURL), redirect directly to the Digital Ticket
+	// If this was a browser return (ReturnURL), redirect directly to the Order History
 	// Otherwise (CallbackURL), return JSON
 	if c.Request.URL.Path == "/api/payments/chapa/return" {
-		targetURL := "http://localhost:3000/orders?payment=success"
+		frontendURL := os.Getenv("FRONTEND_URL")
+		if frontendURL == "" {
+			frontendURL = "http://localhost:5173" // Vite dev default
+		}
+		targetURL := frontendURL + "/orders?payment=success"
 		fmt.Printf("DEBUG: Redirecting to order history: %s\n", targetURL)
 		c.Redirect(http.StatusFound, targetURL)
 		return

@@ -12,6 +12,7 @@ const ProductDetails = () => {
     const [selectedImage, setSelectedImage] = useState(0);
     const [showShareModal, setShowShareModal] = useState(false);
     const [showCompareModal, setShowCompareModal] = useState(false);
+    const [showReviewsModal, setShowReviewsModal] = useState(false);
     const [isWishlisted, setIsWishlisted] = useState(false);
     const [isInCompare, setIsInCompare] = useState(false);
     const [reviews, setReviews] = useState([]);
@@ -273,12 +274,12 @@ const ProductDetails = () => {
                                         {averageRating.toFixed(1)} ({totalReviews.toLocaleString()})
                                     </span>
                                 </div>
-                                <Link
-                                    to={`/reviews/product/${id}`}
+                                <button
+                                    onClick={() => setShowReviewsModal(true)}
                                     className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                                 >
                                     See all {totalReviews.toLocaleString()} customer reviews
-                                </Link>
+                                </button>
                             </div>
 
                             {/* Price */}
@@ -403,6 +404,18 @@ const ProductDetails = () => {
                                 >
                                     {product.stock <= 0 ? 'Out of Stock' : `Buy Now - ${formatPrice(product.price)}`}
                                 </button>
+                                {/* Sold by info */}
+                                {product.seller && (
+                                    <div className="mt-3 pt-3 border-t border-gray-200 text-sm text-gray-600">
+                                        <span>Ships from and sold by </span>
+                                        <Link
+                                            to={`/seller/${product.seller.id}`}
+                                            className="text-[#007185] hover:text-[#C7511F] hover:underline font-medium"
+                                        >
+                                            {product.seller.store_name || 'Amazon Seller'}
+                                        </Link>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -445,12 +458,12 @@ const ProductDetails = () => {
                             <div className="bg-white border border-gray-200 rounded-lg p-4">
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="text-lg font-semibold text-gray-900">Customer Reviews</h3>
-                                    <Link
-                                        to={`/reviews/product/${id}`}
+                                    <button
+                                        onClick={() => setShowReviewsModal(true)}
                                         className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                                     >
                                         See all reviews
-                                    </Link>
+                                    </button>
                                 </div>
                                 <div className="space-y-4">
                                     {reviews.slice(0, 2).map((review) => (
@@ -534,6 +547,53 @@ const ProductDetails = () => {
                             Compare {product.name} with other products to make the best choice.
                         </div>
                         {/* Compare functionality would go here */}
+                    </div>
+                </div>
+            )}
+
+            {/* Reviews Modal */}
+            {showReviewsModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col">
+                        <div className="flex items-center justify-between mb-4 flex-shrink-0">
+                            <h3 className="text-lg font-semibold text-gray-900">Customer Reviews</h3>
+                            <button
+                                onClick={() => setShowReviewsModal(false)}
+                                className="text-gray-400 hover:text-gray-600"
+                            >
+                                <FiX className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <div className="overflow-y-auto flex-1 pr-2">
+                            {reviews.length > 0 ? (
+                                <div className="space-y-6">
+                                    {reviews.map((review) => (
+                                        <div key={review.id} className="border-b border-gray-100 pb-4">
+                                            <div className="flex items-start space-x-3">
+                                                <div className="flex-shrink-0">
+                                                    <div className="flex">
+                                                        {renderStars(review.rating)}
+                                                    </div>
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-sm font-bold text-gray-900">{review.title}</p>
+                                                    <p className="text-sm text-gray-600 mt-2">{review.content}</p>
+                                                    <p className="text-xs text-gray-500 mt-3 font-medium">
+                                                        Reviewed by {review.reviewer_name || 'Amazon Customer'} on {formatTime(review.created_at)}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-12">
+                                    <FiStar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                                    <p className="text-gray-500 font-medium text-lg">No reviews yet.</p>
+                                    <p className="text-sm text-gray-400 mt-1">Check back later or be the first to review this product!</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}

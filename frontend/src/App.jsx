@@ -33,9 +33,11 @@ import CustomerServicePage from './pages/shop/CustomerServicePage';
 import RegistryPage from './pages/shop/RegistryPage';
 import GiftCardsPage from './pages/shop/GiftCardsPage';
 import SearchResults from './pages/shop/SearchResults';
+import SellerStorefront from './pages/shop/SellerStorefront';
+import BuyerDashboard from './pages/user/BuyerDashboard';
 import CartDrawer from './components/CartDrawer';
 
-const BuyerDashboard = () => <div className="p-8 text-center text-2xl font-bold">Buyer Profile Hub</div>;
+
 
 function App() {
   return (
@@ -66,6 +68,7 @@ function App() {
               <Route path="/registry" element={<RegistryPage />} />
               <Route path="/gift-cards" element={<GiftCardsPage />} />
               <Route path="/search" element={<SearchResults />} />
+              <Route path="/seller/:id" element={<SellerStorefront />} />
             </Route>
 
             {/* General Authenticated Group (Any role can access) */}
@@ -78,6 +81,7 @@ function App() {
               <Route path="/seller/dashboard" element={<SellerDashboard />} />
               <Route path="/driver/dashboard" element={<DriverDashboard />} />
               <Route path="/driver/delivery/:deliveryId/complete" element={<DeliveryCompletion />} />
+              <Route path="/account" element={<BuyerDashboard />} />
             </Route>
 
             {/* Buyer Only Group */}

@@ -104,6 +104,7 @@ func SetupRouter() *gin.Engine {
 				sellerProtected.PATCH("/products/:id/stock", controllers.UpdateProductStock)
 
 				// Seller Review Responses
+				sellerProtected.GET("/reviews", controllers.GetMySellerReviews)
 				sellerProtected.POST("/reviews/:id/response", controllers.ReplyToReview)
 
 				// Seller Order Tracking (Phase 6)
@@ -130,9 +131,10 @@ func SetupRouter() *gin.Engine {
 
 		// Buyer Order generation and Tracking
 		orders := api.Group("/orders")
-		orders.Use(middleware.AuthMiddleware(), middleware.RequireBuyer())
+		orders.Use(middleware.AuthMiddleware()) // Any authenticated user can view their own orders
 		{
 			orders.POST("/checkout", controllers.Checkout)
+			orders.GET("", controllers.GetMyOrders)
 			orders.GET("/", controllers.GetMyOrders)
 			orders.GET("/:id", controllers.GetOrderDetails)
 			orders.POST("/:id/pay", controllers.InitChapaPayment)     // Phase 7

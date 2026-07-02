@@ -4,7 +4,7 @@ import "amazon-clone/config"
 
 func GetUsers(role string) ([]User, error) {
 	var users []User
-	query := config.DB.Model(&User{})
+	query := config.DB.Model(&User{}).Preload("SellerProfile")
 	if role != "" {
 		query = query.Where("role = ?", role)
 	}

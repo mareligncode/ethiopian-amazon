@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"amazon-clone/config"
 	"amazon-clone/models"
 	"amazon-clone/utils"
 	"fmt"
@@ -261,7 +262,40 @@ func GetPublicSellers(c *gin.Context) {
 }
 
 func GetSellerProducts(c *gin.Context) {
-	// sellerID := c.Param("id")
-	// Placeholder for Phase 4: Product Management
-	c.JSON(http.StatusOK, gin.H{"message": "Products endpoint placeholder. To be implemented in Phase 4."})
+	sellerProfileID := c.Param("id")
+
+	// Fetch the seller profile
+	var profile models.SellerProfile
+	if err := config.DB.First(&profile, sellerProfileID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Seller not found"})
+		return
+	}
+
+	// Fetch all active and approved products belonging to this seller
+	var products []models.Product
+	err := config.DB.Preload("Images").
+		Where("seller_id = ? AND is_active = ? AND is_approved = ?", profile.UserID, true, true).
+		Order("created_at desc").
+		Find(&products).Error
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch seller products"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"seller": gin.H{
+			"id":           profile.ID,
+			"user_id":      profile.UserID,
+			"store_name":   profile.StoreName,
+			"store_logo":   profile.StoreLogo,
+			"store_banner": profile.StoreBanner,
+			"description":  profile.Description,
+			"rating":       profile.Rating,
+			"total_sales":  profile.TotalSales,
+			"is_verified":  profile.IsVerified,
+		},
+		"products": products,
+		"count":    len(products),
+	})
 }
+

@@ -38,6 +38,10 @@ const AdminDashboard = () => {
     const [orderFilter, setOrderFilter] = useState('all'); // all, pending, processing, shipped, delivered, disputed
     const [orderSearch, setOrderSearch] = useState('');
 
+    // Product Approvals State
+    const [products, setProducts] = useState([]);
+    const [productFilter, setProductFilter] = useState('all'); // all, pending, approved
+
     useEffect(() => {
         fetchAdminData();
         // Set up polling for real-time updates
@@ -56,11 +60,12 @@ const AdminDashboard = () => {
 
             console.log("Fetching admin data from:", endpoints);
 
-            const [overviewResult, usersResult, ordersResult, settingsResult] = await Promise.allSettled([
+            const [overviewResult, usersResult, ordersResult, settingsResult, productsResult] = await Promise.allSettled([
                 api.get(endpoints.overview),
                 api.get(endpoints.users),
                 api.get(endpoints.orders),
-                api.get(endpoints.settings)
+                api.get(endpoints.settings),
+                api.get('/admin/products')
             ]);
 
             if (overviewResult.status === 'fulfilled') {
@@ -89,6 +94,12 @@ const AdminDashboard = () => {
                 setSettings(settingsResult.value.data.settings || []);
             } else {
                 console.error("Settings fetch failed:", settingsResult.reason);
+            }
+
+            if (productsResult.status === 'fulfilled') {
+                setProducts(productsResult.value.data.products || []);
+            } else {
+                console.error("Products fetch failed:", productsResult.reason);
             }
 
             if (overviewResult.status === 'rejected' && usersResult.status === 'rejected' && ordersResult.status === 'rejected') {
@@ -138,14 +149,21 @@ const AdminDashboard = () => {
 
     const handleOrderIntervention = async (orderId, action) => {
         try {
-            // Mapping for order actions if any exist in backend. 
-            // Currently backend handles global-orders GET but maybe not specific admin PUTs yet.
-            // Placeholder for future admin order management
             setError("Order intervention endpoints are not yet fully implemented in backend.");
             console.log(`Action ${action} requested for order ${orderId}`);
         } catch (error) {
             console.error(`Failed to ${action} order:`, error);
             setError(`Failed to ${action} order`);
+        }
+    };
+
+    const handleProductApproval = async (productId, approve) => {
+        try {
+            await api.put(`/admin/products/${productId}/approve`, { is_approved: approve });
+            fetchAdminData();
+        } catch (error) {
+            console.error(`Failed to ${approve ? 'approve' : 'reject'} product:`, error);
+            setError(`Failed to update product: ${error.response?.data?.error || error.message}`);
         }
     };
 
@@ -273,6 +291,7 @@ const AdminDashboard = () => {
                         {[
                             { id: 'overview', label: 'Financial Overview', icon: FiBarChart2 },
                             { id: 'users', label: 'User Directory', icon: FiUsers },
+                            { id: 'products', label: 'Product Approvals', icon: FiStar },
                             { id: 'orders', label: 'Order Console', icon: FiPackage },
                             { id: 'settings', label: 'System Settings', icon: FiSettings }
                         ].map((tab) => (
@@ -538,7 +557,7 @@ const AdminDashboard = () => {
                                                 </td>
                                                 <td className="px-4 py-3">
                                                     <div className="flex items-center space-x-2">
-                                                        {user.role === 'seller' && user.status === 'pending' && (
+                                                        {user.role === 'seller' && user.seller_profile && !user.seller_profile.is_verified && (
                                                             <button
                                                                 onClick={() => handleUserAction(user.id, 'verify')}
                                                                 className="text-green-600 hover:text-green-700"
@@ -712,6 +731,133 @@ const AdminDashboard = () => {
                                                 </td>
                                             </tr>
                                         ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Product Approvals Tab */}
+                {activeTab === 'products' && (
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-lg font-semibold text-gray-900">Product Approvals</h2>
+                            <button
+                                onClick={fetchAdminData}
+                                className="text-purple-600 hover:text-purple-700"
+                            >
+                                <FiRefreshCw className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        {/* Filters */}
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                            <div className="flex space-x-2">
+                                {['all', 'pending', 'approved'].map((filter) => (
+                                    <button
+                                        key={filter}
+                                        onClick={() => setProductFilter(filter)}
+                                        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${productFilter === filter
+                                            ? 'bg-purple-600 text-white'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                            }`}
+                                    >
+                                        {filter === 'all' ? 'All Products' : filter === 'pending' ? 'Pending Approval' : 'Approved'}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Products DataGrid */}
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Seller</th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {products
+                                            .filter(p => {
+                                                if (productFilter === 'pending') return !p.is_approved;
+                                                if (productFilter === 'approved') return p.is_approved;
+                                                return true;
+                                            })
+                                            .map((product) => (
+                                            <tr key={product.id}>
+                                                <td className="px-4 py-3">
+                                                    <div className="flex items-center">
+                                                        {product.image_url ? (
+                                                            <img src={product.image_url} alt={product.name} className="w-10 h-10 rounded object-cover mr-3" />
+                                                        ) : (
+                                                            <div className="w-10 h-10 rounded bg-gray-100 flex items-center justify-center mr-3">
+                                                                <FiPackage className="w-5 h-5 text-gray-400" />
+                                                            </div>
+                                                        )}
+                                                        <div>
+                                                            <p className="text-sm font-medium text-gray-900">{product.name}</p>
+                                                            <p className="text-xs text-gray-500">{product.brand || 'No brand'} &middot; SKU: {product.sku || 'N/A'}</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-4 py-3 text-sm text-gray-700">
+                                                    {product.seller?.store_name || `Seller #${product.seller_id}`}
+                                                </td>
+                                                <td className="px-4 py-3 text-sm text-gray-700">
+                                                    {product.category?.name || 'Uncategorized'}
+                                                </td>
+                                                <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(product.price)}</td>
+                                                <td className="px-4 py-3 text-sm text-gray-900">{product.stock}</td>
+                                                <td className="px-4 py-3">
+                                                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                                        product.is_approved
+                                                            ? 'bg-green-100 text-green-800'
+                                                            : 'bg-yellow-100 text-yellow-800'
+                                                    }`}>
+                                                        {product.is_approved ? 'Approved' : 'Pending'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3">
+                                                    <div className="flex items-center space-x-2">
+                                                        {!product.is_approved && (
+                                                            <button
+                                                                onClick={() => handleProductApproval(product.id, true)}
+                                                                className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 transition-colors"
+                                                                title="Approve Product"
+                                                            >
+                                                                <FiCheckCircle className="w-3 h-3 mr-1" /> Approve
+                                                            </button>
+                                                        )}
+                                                        {product.is_approved && (
+                                                            <button
+                                                                onClick={() => handleProductApproval(product.id, false)}
+                                                                className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 transition-colors"
+                                                                title="Revoke Approval"
+                                                            >
+                                                                <FiXCircle className="w-3 h-3 mr-1" /> Revoke
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        {products.filter(p => {
+                                            if (productFilter === 'pending') return !p.is_approved;
+                                            if (productFilter === 'approved') return p.is_approved;
+                                            return true;
+                                        }).length === 0 && (
+                                            <tr>
+                                                <td colSpan="7" className="px-4 py-8 text-center text-gray-500">No products found matching this filter.</td>
+                                            </tr>
+                                        )}
                                     </tbody>
                                 </table>
                             </div>

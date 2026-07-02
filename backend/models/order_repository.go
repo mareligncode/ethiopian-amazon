@@ -4,6 +4,7 @@ import (
 	"amazon-clone/config"
 	"errors"
 	"fmt"
+	"time"
 )
 
 // ProcessCheckout executes a safe transaction converting active cart items into a concrete order
@@ -21,7 +22,9 @@ func ProcessCheckout(userID uint, shippingAddress string) (*Order, error) {
 	var selectedItems []CartItem
 	for _, item := range cartItems {
 		fmt.Printf("DEBUG: ItemID %d | ProductID %d | Selected: %v | Saved: %v\n", item.ID, item.ProductID, item.IsSelectedForCheckout, item.IsSavedForLater)
-		if item.IsSelectedForCheckout && !item.IsSavedForLater {
+		// Include item if NOT saved for later.
+		// IsSelectedForCheckout defaults to true but may be false on old rows; we include both.
+		if !item.IsSavedForLater {
 			selectedItems = append(selectedItems, item)
 		}
 	}
@@ -116,6 +119,7 @@ func ProcessCheckout(userID uint, shippingAddress string) (*Order, error) {
 		ShippingAddress: shippingAddress,
 		Status:          "pending",
 		PaymentMethod:   "pending", // Wait for Phase 7
+		TxRef:           fmt.Sprintf("checkout-pending-%d-%d", userID, time.Now().UnixNano()),
 	}
 
 	if err := tx.Create(&order).Error; err != nil {
@@ -174,6 +178,7 @@ func ProcessCheckout(userID uint, shippingAddress string) (*Order, error) {
 func GetBuyerOrders(userID uint) ([]Order, error) {
 	var orders []Order
 	err := config.DB.Where("user_id = ?", userID).
+		Preload("Items.Product.Images"). // Load images so ImageURL populates via AfterFind hook
 		Preload("Items.Product.Seller"). // Reveal who shipped what inside the receipt
 		Order("created_at desc").
 		Find(&orders).Error

@@ -21,4 +21,5 @@ type User struct {
 	DeletedAt           gorm.DeletedAt `gorm:"index" json:"-"`
 	PasswordResetToken  string         `gorm:"size:255" json:"-"`
 	PasswordResetExpiry *time.Time     `json:"-"`
+	SellerProfile       *SellerProfile `gorm:"foreignKey:UserID" json:"seller_profile,omitempty"`
 }

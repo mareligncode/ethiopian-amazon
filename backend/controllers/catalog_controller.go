@@ -35,6 +35,9 @@ func GetCatalog(c *gin.Context) {
 	sort := c.DefaultQuery("sort", "created_at desc")
 	query = query.Order(sort)
 
+	// Restrict to active and approved products for the public catalog
+	query = query.Where("is_active = ? AND is_approved = ?", true, true)
+
 	err := query.Find(&products).Error
 
 	if err != nil {
